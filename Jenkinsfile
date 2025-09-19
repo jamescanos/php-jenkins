@@ -2,24 +2,45 @@ pipeline {
     agent any
     
     stages {
-        stage('Paso 1: Clonar') {
+        stage('Clonar codigo') {
             steps {
                 git branch: 'main', url: 'https://github.com/jamescanos/php-jenkins.git'
-                echo 'Codigo descargado'
+                echo 'Codigo clonado'
             }
         }
         
-        stage('Paso 2: Verificar') {
+        stage('Verificar archivos') {
             steps {
-                sh 'apt-get update && apt-get install -y php'
-                sh 'php -l index.php || echo "Continuamos"'
-                echo 'PHP verificado'
+                sh '''
+                    echo "=== ARCHIVOS EN EL REPOSITORIO ==="
+                    ls -la
+                    echo "=== CONTENIDO DE index.php ==="
+                    if [ -f "index.php" ]; then
+                        cat index.php
+                    else
+                        echo "No se encontro index.php"
+                    fi
+                '''
+                echo 'Archivos verificados'
             }
         }
         
-        stage('Paso 3: Completar') {
+        stage('Simular validacion') {
             steps {
-                echo 'Pipeline terminado con exito!'
+                sh '''
+                    echo "=== SIMULACION DE VALIDACION ==="
+                    echo "Si PHP estuviera instalado, se validaria la sintaxis:"
+                    echo "php -l index.php"
+                    echo "=== SIMULACION COMPLETADA ==="
+                '''
+                echo 'Validacion simulada'
+            }
+        }
+        
+        stage('Completar') {
+            steps {
+                echo 'PIPELINE COMPLETADO EXITOSAMENTE'
+                echo 'Los estudiantes pueden ver el flujo completo'
             }
         }
     }
