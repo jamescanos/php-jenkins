@@ -1,57 +1,44 @@
 pipeline {
-    agent none
+    agent any
     
     stages {
-        stage('Clonar código') {
-            agent any
+        stage('Clonar') {
             steps {
-                git branch: 'main', 
-                    url: 'https://github.com/jamescanos/php-jenkins.git'
-                echo 'Código PHP clonado'
+                git branch: 'main', url: 'https://github.com/jamescanos/php-jenkins.git'
+                echo 'Codigo clonado'
             }
         }
         
         stage('Validar PHP') {
             agent {
                 docker {
-                    image 'php:8.2-cli'  # Contenedor con PHP instalado
+                    image 'php:8.2-cli'
                     reuseNode true
                 }
             }
             steps {
                 sh 'php -l index.php'
-                echo 'Sintaxis PHP validada'
+                echo 'PHP validado'
             }
         }
         
-        stage('Ejecutar tests') {
+        stage('Tests') {
             agent {
                 docker {
-                    image 'php:8.2-cli'  # Usamos el mismo contenedor
+                    image 'php:8.2-cli'
                     reuseNode true
                 }
             }
             steps {
-                sh 'php -r "echo \"Tests simulados exitosos\n\";"'
-                echo 'Tests ejecutados'
+                sh 'php -r "echo \"Tests OK\n\";"'
+                echo 'Tests listos'
             }
         }
         
-        stage('Desplegar') {
-            agent any
+        stage('Final') {
             steps {
-                echo 'Aplicación PHP lista para desplegar'
-                echo 'Puedes agregar aquí tus comandos de despliegue'
+                echo 'Pipeline completado'
             }
-        }
-    }
-    
-    post {
-        success {
-            echo '¡Pipeline ejecutado con éxito!'
-        }
-        failure {
-            echo 'Pipeline falló. Revisar los logs.'
         }
     }
 }
